@@ -116,6 +116,15 @@ class SADMIN extends WsdlBase {
 			return 400;
 		}
     }	
+    
+     /**
+     * Renvoi le crédit du user.
+     * 
+     * @return int $credit
+     */
+    public function getCredit() {
+        return $this->User->getCredit();
+    }	
 
     /**
      * Fonction pour se blocker soi meme (en cas de perte/vol par exemple)
