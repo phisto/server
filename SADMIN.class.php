@@ -126,6 +126,24 @@ class SADMIN extends WsdlBase {
         return $this->User->getCredit();
     }	
 
+	/**
+	* Retourne le firstname
+	* 
+	* @return string $firstname
+	*/
+	public function getFirstname() {
+		return $this->User->getFirstname();
+	}
+
+	/**
+	* Retourne le lastname
+	* 
+	* @return string $lastname
+	*/
+	public function getLastname() {
+		return $this->User->getLastname();
+	}
+
     /**
      * Fonction pour se blocker soi meme (en cas de perte/vol par exemple)
      * 1:Le compte a été changé
