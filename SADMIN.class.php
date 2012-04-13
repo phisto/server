@@ -34,6 +34,7 @@ require_once 'class/WsdlBase.class.php';
 require_once 'class/Buyer.class.php';
 require_once 'class/User.class.php';
 require_once 'class/ComplexData.class.php';
+require_once 'class/xmlToArrayParser.class.php';
 
 class SADMIN extends WsdlBase {
 
@@ -58,6 +59,30 @@ class SADMIN extends WsdlBase {
 	 */
     public function login($data, $meanOfLogin, $pass, $ip) {
         $this->User = new User($data, $meanOfLogin, $pass, $ip);
+        $this->Point = new Point(1);
+        return $this->User->getState();
+    }
+    
+   /**
+	 * Connecter le user avec un ticket CAS.
+	 * 
+	 * @param String $ticket
+	 * @param String $service
+	 * @return int $state
+	 */
+    public function loginCas($ticket, $service) {
+			  $url_validate = "https://cas.utc.fr/cas/serviceValidate?service=".$service."&ticket=".$ticket;
+			  $get_reponse = fopen($url_validate, "r");
+			  $data=''; 
+				while(!feof($get_reponse)) 
+					$data.=fread($get_reponse,100); 
+				fclose($handle);
+				$parsed = new xmlToArrayParser($data);
+				if(isset($parsed->array['cas:serviceResponse']['cas:authenticationSuccess']['cas:user'])) 
+					$login = $parsed->array['cas:serviceResponse']['cas:authenticationSuccess']['cas:user']; 
+				else
+					$login = "-1";
+        $this->User = new User($login, 1, "", 0, 1);
         $this->Point = new Point(1);
         return $this->User->getState();
     }
