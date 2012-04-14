@@ -65,7 +65,7 @@ if($_GET['action'] == 'retour') {
 }
 
 // Verification de la signature (1 = BON)
-$CheckSig = PbxVerSign( $data, 'pubkey.pem' );
+$CheckSig = PbxVerSign( $data, '../pubkey.pem' );
 
 mymail();
 
