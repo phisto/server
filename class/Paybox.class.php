@@ -44,7 +44,7 @@ class Paybox {
      * @return string 
      */
     public function execute($amount, $callback_url, $mobile=0) {
-			$PBX = ""
+			$PBX = "";
 			// MODE D'UTILISATION DE PAYBOX
 			$PBX .= "PBX_MODE=4";
 			// IDENTIFICATION (ICI MODE DEVELLOPEUR)
