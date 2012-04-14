@@ -198,7 +198,7 @@ class SADMIN extends WsdlBase {
      
     public function reload($amount, $callbackUrl) {
 			  // Peut-il se recharger d'un tel montant
-			  $auth = $this->canReload();
+			  $auth = $this->canReload($amount);
 			  if($auth != 1)
 					return "<error>".$this->getErrorDetail($auth)."</error>";
 					

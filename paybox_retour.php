@@ -65,7 +65,7 @@ $CheckSig = PbxVerSign( $data, '../pubkey.pem' );
 
 mymail();
 
-$montant=$_GET['amout'];
+$montant=$_GET['amount'];
 $cmd=$_GET['ident'];
 
 $auto=$_GET['auto'];
