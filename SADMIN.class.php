@@ -35,11 +35,13 @@ require_once 'class/Buyer.class.php';
 require_once 'class/User.class.php';
 require_once 'class/ComplexData.class.php';
 require_once 'class/xmlToArrayParser.class.php';
+require_once 'class/Paybox.class.php';
 
 class SADMIN extends WsdlBase {
 
     private  $User;
-
+		protected $MAX_CREDIT = 10000; //100 €
+		
     /**
      * Constructeur qui chope la conexion a la DB
      * @return
@@ -151,23 +153,58 @@ class SADMIN extends WsdlBase {
         return $this->User->getCredit();
     }	
 
-	/**
-	* Retourne le firstname
-	* 
-	* @return string $firstname
-	*/
-	public function getFirstname() {
-		return $this->User->getFirstname();
-	}
+		/**
+		* Retourne le firstname
+		* 
+		* @return string $firstname
+		*/
+		public function getFirstname() {
+			return $this->User->getFirstname();
+		}
 
-	/**
-	* Retourne le lastname
-	* 
-	* @return string $lastname
-	*/
-	public function getLastname() {
-		return $this->User->getLastname();
-	}
+		/**
+		* Retourne le lastname
+		* 
+		* @return string $lastname
+		*/
+		public function getLastname() {
+			return $this->User->getLastname();
+		}
+	
+	  /**
+	   * Fonction pour vérifier qu'un client peut recharger d'un certain montant
+	   * Il n'est pas obligatoire de l'appeler avant reload($amount)
+	   * Mais le retour de reload si on a pas le droit de recharger sera beaucoup moins "joli"
+	   * 
+	   * @param int $amount (en centimes)
+	   * @return int $code
+	   */
+	  public function canReload($amount) {
+			$Buyer_credit = $this->User->getCredit(); //évite de faire 2 fois de suite la même requête
+		  if ($Buyer_credit >= $this->MAX_CREDIT)
+				return 450;
+			if (($Buyer_credit + $amount) > $this->MAX_CREDIT)
+				return 451;
+			return 1;
+		}
+	
+	  /**
+     * Fonction pour recharger un client.
+     * 
+     * @param int $amount (en centimes)
+     * @param String $callbackUrl
+     * @return String $page
+     */
+     
+    public function reload($amount, $callbackUrl) {
+			  // Peut-il se recharger d'un tel montant
+			  $auth = $this->canReload();
+			  if($auth != 1)
+					return "<error>".$this->getErrorDetail($auth)."</error>";
+					
+        $pb = new Paybox($this->User);
+        return $pb->execute($amount, $callbackUrl);
+    }
 
     /**
      * Fonction pour se blocker soi meme (en cas de perte/vol par exemple)
@@ -415,41 +452,6 @@ class SADMIN extends WsdlBase {
         }
     }	
 	
-	
-	
-	
-	
-	
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Retourne un csv qui contient les id_fundation, id_point en fonction de ses droits
