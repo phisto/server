@@ -59,7 +59,7 @@ class Paybox {
       $PBX .= " PBX_CMD=".base64_encode($this->User->getId().";".time()); // REFERENCE DE LA COMMANDE
       $PBX .= " PBX_PORTEUR=".$this->User->getMail(); // mail du client
       //informations nécessaires aux traitements (réponse)
-      $PBX .= " PBX_RETOUR=auto:A\;amount:M\;ident:R\;trans:T\;sign:K";
+      //$PBX .= " PBX_RETOUR=auto:A\;amount:M\;ident:R\;trans:T\;sign:K";
       $PBX .= " PBX_REPONDRE_A=http://assos.utc.fr/buckutt/paybox_retour.php";
       $PBX .= " PBX_EFFECTUE=$callback_url?paybox=effectue";
       $PBX .= " PBX_REFUSE=$callback_url?paybox=refuse";
