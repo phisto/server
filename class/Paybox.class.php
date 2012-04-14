@@ -73,6 +73,8 @@ class Paybox {
       $PBX .= " PBX_PAYBOX=$pbx_url";
 			$PBX .= " PBX_BACKUP1=$pbx_url";
 			$PBX .= " PBX_BACKUP2=$pbx_url";
+			// PROXY
+			$PBX .= " PBX_PROXY=proxyweb.utc.fr:3128";
 			return shell_exec($this->path_bin." $PBX");
 	  }
 }
