@@ -65,7 +65,10 @@ if($CheckSig==1) {
 
 	// TODO :: Il faut vérifier la variable $auto si elle est = à XXXXX.. c'est que c'est une transaction en mode dévellopeur
 	//         Si elle n'est pas la (ou code d'erreur? faut lire la doc) ça veut dire que la transaction n'a pas eu lieu.
-	// TODO2 :: vérifier que la transaction n'a pas déjà été enregistré ($_GET['IDENT'] doit etre sauvegardé et on doit vérifier qu'il est unique).
+	if ($db->numRows($db->query("SELECT rty_id FROM t_recharge_rec WHERE usr_id_buyer='%u' AND rec_trace='%s'", array($usrid, $trace))) > 0) {
+		// TODO4: LOG le fait qu'un utilisateur à essayé de recharger une seconde fois avec un rechargement déjà éffectué. !!
+		exit();
+	}
 
 	$db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($amount, $usrid));
 	$db->query(("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')"), array(3, $usrid, $usrid, 1, $amount, $trace));
