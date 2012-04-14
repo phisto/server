@@ -51,24 +51,25 @@ $data = substr( $_SERVER["REQUEST_URI"], $pos+1 );
 // Verification de la signature (1 = BON)
 $CheckSig = PbxVerSign( $data, '../pubkey.pem' );
 
+if($CheckSig==1) {
 
-$amount=$_GET['amount'];
-$ref = base64_decode($_GET['ident']);
-$usrid=substr($ref,0,strrpos($ref, ';'));
+	$amount=$_GET['amount'];
+	$ref = base64_decode($_GET['ident']);
+	$usrid=substr($ref,0,strrpos($ref, ';'));
 
-$auto=$_GET['auto'];
-$trans=$_GET['trans'];
-$trace = $data;
+	$auto=$_GET['auto'];
+	$trans=$_GET['trans'];
+	$trace = $data;
 
-echo $usrid;
-echo "<br />";
-echo $amount;
+	$db = Db_buckutt::getInstance();
 
-$db = Db_buckutt::getInstance();
+	// TODO :: Il faut vérifier la variable $auto si elle est = à XXXXX.. c'est que c'est une transaction en mode dévellopeur
+	//         Si elle n'est pas la (ou code d'erreur? faut lire la doc) ça veut dire que la transaction n'a pas eu lieu.
+	// TODO2 :: vérifier que la transaction n'a pas déjà été enregistré ($_GET['IDENT'] doit etre sauvegardé et on doit vérifier qu'il est unique).
 
-// TODO :: Il faut vérifier la variable $auto si elle est = à XXXXX.. c'est que c'est une transaction en mode dévellopeur
-//         Si elle n'est pas la (ou code d'erreur? faut lire la doc) ça veut dire que la transaction n'a pas eu lieu.
-// TODO2 :: vérifier que la transaction n'a pas déjà été enregistré ($_GET['IDENT'] doit etre sauvegardé et on doit vérifier qu'il est unique).
-
-//$db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($amount, $usrid));
-//$db->query(("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')"), array(3, $usrid, $usrid, 1, $amount, $trace));
+	$db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($amount, $usrid));
+	$db->query(("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')"), array(3, $usrid, $usrid, 1, $amount, $trace));
+} else {
+	// TODO3 :: Ajouter des logs dans un fichier
+	// Ici il faut loger le fait que la signature est fausse.
+}
