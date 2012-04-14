@@ -75,4 +75,3 @@ class xmlToArrayParser {
     return $idx; 
   } 
 } 
-?> 

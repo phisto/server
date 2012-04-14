@@ -24,15 +24,12 @@ class Paybox {
 
     private $User;
     private $db;
-    private $path_bin;
-    private $logfile;
+    private $path_bin = "/usr/share/buckutt/modulev3.cgi";
+    private $logfile = "/var/log/log_paybox_brut.txt";
     
     public function __construct(&$User) {
         $this->db = Db_buckutt::getInstance();
         $this->User = &$User;
-        // c'est là qu'on change si on change le directory de paybox
-        $this->path_bin = "/usr/share/buckutt/modulev3.cgi";
-        $this->logfile = "/var/log/log_paybox_brut.txt";
     }
 
     
