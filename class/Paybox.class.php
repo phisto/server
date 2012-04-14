@@ -46,8 +46,8 @@ class Paybox {
 			$PBX .= "PBX_MODE=4";
 			// IDENTIFICATION (ICI MODE DEVELLOPEUR)
 			$PBX .= " PBX_SITE=1999888";
-      $PBX .= " PBX_RANG=44";
-      $PBX .= " PBX_IDENTIFIANT=1372";
+      $PBX .= " PBX_RANG=082";
+      $PBX .= " PBX_IDENTIFIANT=110532808";
       //gestion de la page de connection : paramétrage "invisible"
       $PBX .= " PBX_WAIT=0";
       $PBX .= " PBX_TXT=";

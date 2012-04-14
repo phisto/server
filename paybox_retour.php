@@ -78,4 +78,5 @@ if($CheckSig==1) {
 } else {
 	// TODO3 :: Ajouter des logs dans un fichier
 	// Ici il faut loger le fait que la signature est fausse.
+	echo "Signature paybox fausse !";
 }
