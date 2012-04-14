@@ -65,18 +65,17 @@ $CheckSig = PbxVerSign( $data, '../pubkey.pem' );
 
 mymail();
 
-$montant=$_GET['amount'];
-$cmd=$_GET['ident'];
+$amount=$_GET['amount'];
+$usrid=substr(base64_decode($_GET['ident']),-11);
 
 $auto=$_GET['auto'];
 $trans=$_GET['trans'];
-
+$trace = $data;
 
 $db = Db_buckutt::getInstance();
 
-$amount = "1000";
-$usrid = "9422";
+// TODO :: Il faut vérifier la variable $auto si elle est = à XXXXX.. c'est que c'est une transaction en mode dévellopeur
+//         Si elle n'est pas la (ou code d'erreur? faut lire la doc) ça veut dire que la transaction n'a pas eu lieu.
 
-
-//$db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($amount, $usrid));
-//$db->query(("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')"), array(3, $rtn[2], $rtn[2], 1, $rtn[1], $trace));
+$db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit + '%u') WHERE usr_id = '%u';", Array($amount, $usrid));
+$db->query(("INSERT INTO t_recharge_rec (rty_id, usr_id_buyer, usr_id_operator, poi_id, rec_date, rec_credit, rec_trace) VALUES ('%u', '%u', '%u', '%u', NOW(), '%u', '%s')"), array(3, $usrid, $usrid, 1, $amount, $trace));
