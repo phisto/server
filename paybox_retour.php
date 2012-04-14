@@ -63,15 +63,13 @@ if($CheckSig==1) {
 
 	$db = Db_buckutt::getInstance();
 
-$db->query("UPDATE ts_user_usr SET usr_credit = (usr_credit - 1000) WHERE usr_id = '%u';", Array(9422));
-
 	// TODO :: Il faut vérifier la variable $auto si elle est = à XXXXX.. c'est que c'est une transaction en mode dévellopeur
 	//         Si elle n'est pas la (ou code d'erreur? faut lire la doc) ça veut dire que la transaction n'a pas eu lieu.
+	
 	$num = $db->numRows($db->query("SELECT rty_id FROM t_recharge_rec WHERE usr_id_operator='%u'", array($trans)));
-	echo $num;
 	if ($num > 0) {
 		// TODO4: LOG le fait qu'un utilisateur à essayé de recharger une seconde fois avec un rechargement déjà éffectué. !!
-		echo "BOUH!";
+		echo "Transaction déjà enregistré ! ($num)";
 		exit();
 	}
 
