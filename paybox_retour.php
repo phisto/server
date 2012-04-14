@@ -51,8 +51,8 @@ $data = substr( $_SERVER["REQUEST_URI"], $pos+1 );
 // Verification de la signature (1 = BON)
 $CheckSig = PbxVerSign( $data, '../pubkey.pem' );
 
-if($get['erreur'] != '00000') {
-
+if($_GET['erreur'] != '00000') {
+	echo "erreur is ".$_GET['erreur'];
 } else if($CheckSig==1) {
 
 	$amount=$_GET['amount'];
