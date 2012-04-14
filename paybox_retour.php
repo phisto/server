@@ -53,7 +53,8 @@ $CheckSig = PbxVerSign( $data, '../pubkey.pem' );
 
 
 $amount=$_GET['amount'];
-$usrid=substr(base64_decode($_GET['ident']),-11);
+$ref = base64_decode($_GET['ident']);
+$usrid=substr($ref,0,strrpos($ref, ';'));
 
 $auto=$_GET['auto'];
 $trans=$_GET['trans'];
