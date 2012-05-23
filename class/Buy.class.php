@@ -277,17 +277,17 @@ class Buy extends WsdlBase {
 	 * @return int $state
 	 */
 	public function transaction($obj_ids, $trace, $operator_id) {
-		$obj_ids = explode(','$obj_ids);
+		$obj_ids = explode(',',$obj_ids);
 		$prices = array();
 		$sum = 0;
-
+		
 		// récupération des ids, du prix
 		// et somme des prix des articles
-		foreach ($obj_ids as $key => $value) {
+		foreach ($obj_ids as $value) {
 			$obj_id = trim($value);
-			$price = Price::getPrice($this->Buyer, $this->Point, $Object);
+			$object = new Object($obj_id);
+			$price = Price::getPrice($this->Buyer, $this->Point, $object);
 			if (is_null($price)) {
-				$this->endTransaction();
 				return -1;
 			}
 			$prices[$obj_id] = $price;
@@ -303,13 +303,15 @@ class Buy extends WsdlBase {
 
 		// validation de la transaction
 		foreach($prices as $key => $value) {
-			$return = this->select($this->Buyer, $this->Point, $Object, $value);
+			$return = $this->select($key, $value, $trace, $operator_id);
 			// gros gros bug qui ne devrait jamais arriver
-			if ($return != 0) {
+			if ($return != 1) {
 				$this->endTransaction();
 				return $return;
 			}
 		}
+		
+		
 
 		$this->endTransaction();
 
@@ -319,4 +321,3 @@ class Buy extends WsdlBase {
 
 
 ?>
-

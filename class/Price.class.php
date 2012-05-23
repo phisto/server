@@ -216,7 +216,7 @@ class Price {
 	public static function checkPrice(&$User, &$Point, &$Object, $credit) {
 		//TODO vérifier suite aux modifs sur la requere des propositions
 		$creditBDD = Price::getPrice($User, $Point, $Object);
-		if (!is_null($creditBDD) {
+		if (!is_null($creditBDD)) {
 			if (is_null($credit) or $creditBDD == $credit)
 				return 1;
 			else
@@ -267,6 +267,7 @@ per3.per_date_end >= NOW()
 
 GROUP BY obj.obj_id
 		;", Array($Object->getId(), $User->getId(), $Point->getId()));
+		
 		return $db->result($result);
 	}
 }

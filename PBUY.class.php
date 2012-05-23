@@ -253,13 +253,12 @@ class PBUY extends Buy {
 	 * 
 	 * @param String $obj_ids
 	 * @param String $trace
-	 * @param int $operator_id
 	 * @return int $state
 	 */
 	public function transaction($obj_ids, $trace) {
 		if (isset($this->Buyer)) {
 			$trace .= " via PBUY";
-			return parent::select($obj_id, $obj_credit, $trace, $this->Seller->getId());
+			return parent::transaction($obj_ids, $obj_credit, $trace, $this->Seller->getId());
 		}
 		else
 			return 409;
