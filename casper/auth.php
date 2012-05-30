@@ -37,13 +37,13 @@ if(isset($_SESSION["loged"]) && $_SESSION["loged"] == 1) {
 	if(isset($_GET["ticket"])) {
 		// Connexion soap
 		$ticket = $_GET["ticket"];
-		$code = $SADMIN->loginCas($ticket, $CONF['url']);
+		$code = $SADMIN->loginCas($ticket, $CONF['casper_url']);
 		if($code == 1)
 		{
 			$_SESSION['cookies'] = $SADMIN->_cookies;
 			$_SESSION['loged'] = 1;
 			// Pas obligatoire mais c'est mieux pour virer le ticket de la barre d'adresse
-			header("Location: ".$CONF['url']);
+			header("Location: ".$CONF['casper_url']);
 		  	exit();
 		} else {
 			echo $SADMIN->getErrorDetail($code);
