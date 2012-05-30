@@ -56,14 +56,14 @@ class Buy extends WsdlBase {
 	}
 	
 	/**
-	 * Charge le Buyer.
-	 * 
+	* Charge le Buyer.
+	* 
 	* @param string $data
 	* @param int $meanOfLogin
 	* @param string $pass
 	* @param string $ip[optional]
 	* @param int $noPass[optional] 1 si connexion sans mot de passe (badgeage simple au foyer)
-	 * @return int $state
+	* @return int $state
 	*/
 	public function loadBuyer($data, $meanOfLogin, $pass,  $ip = 0, $noPass = 0) {				
 		$this->Buyer = new Buyer($data, $meanOfLogin, $pass, $ip, $noPass);
@@ -266,5 +266,58 @@ class Buy extends WsdlBase {
 		$this->promo_step = 0;
 		return 1;
 	}
+
+
+	/**
+	 * Acheter ou sélectionner des objets.
+	 * 
+	 * @param String $obj_ids
+	 * @param String $trace
+	 * @param int $operator_id
+	 * @return int $state
+	 */
+	public function transaction($obj_ids, $trace, $operator_id) {
+		$obj_ids = explode(',',$obj_ids);
+		$prices = array();
+		$sum = 0;
+		
+		// récupération des ids, du prix
+		// et somme des prix des articles
+		foreach ($obj_ids as $value) {
+			$obj_id = trim($value);
+			$object = new Object($obj_id);
+			$price = Price::getPrice($this->Buyer, $this->Point, $object);
+			if (is_null($price)) {
+				return -1;
+			}
+			$prices[$obj_id] = $price;
+			$sum += $price;
+		}
+
+		// vérification que l'user peut tout acheter
+		$user_credit = $this->Buyer->getCredit();
+		if ($user_credit < $sum) {
+			$this->endTransaction();
+			return -2;
+		}
+
+		// validation de la transaction
+		foreach($prices as $key => $value) {
+			$return = $this->select($key, $value, $trace, $operator_id);
+			// gros gros bug qui ne devrait jamais arriver
+			if ($return != 1) {
+				$this->endTransaction();
+				return $return;
+			}
+		}
+		
+		
+
+		$this->endTransaction();
+
+		return 1;
+	}
 }
+
+
 ?>

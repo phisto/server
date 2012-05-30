@@ -216,14 +216,10 @@ class PBUY extends Buy {
 	 */
 	public function getProposition() {
 		if (isset($this->Seller)) {
-			if (isset($this->Buyer)) {
-				if ($this->isSeller() == 1) {
-					return parent::getProposition($this->Seller);
-				} else {
-					return $this->isSeller();
-				}
+			if ($this->isSeller() == 1) {
+				return parent::getProposition($this->Seller);
 			} else {
-				return 409;
+				return $this->isSeller();
 			}
 		} else {
 			return 408;
@@ -238,13 +234,31 @@ class PBUY extends Buy {
 	 * @param String $trace
 	 * @return int $state
 	 */
-	public function select($obj_id, $obj_credit, $trace) {		
+	public function select($obj_id, $obj_credit, $trace) {
 		if (isset($this->Buyer)) {
 			$trace .= " via PBUY";
 			return parent::select($obj_id, $obj_credit, $trace, $this->Seller->getId());
 		}
 		else
 			return 409;
+	}
+
+	
+	/**
+	 * Acheter ou sélectionner des objets.
+	 * 
+	 * @param String $obj_ids
+	 * @param String $trace
+	 * @return int $state
+	 */
+	public function transaction($obj_ids, $trace) {
+		if (isset($this->Buyer)) {
+			$trace .= " via PBUY";
+			return parent::transaction($obj_ids, $obj_credit, $trace, $this->Seller->getId());
+		}
+		else
+			return 409;
+
 	}
 }
 
