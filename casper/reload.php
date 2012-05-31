@@ -10,7 +10,7 @@ if(isset($_GET["reload"]))
 		if($can == 1)
 		{
 			// On peut recharger
-			echo $SADMIN->reload($amount, $CONF['url']);
+			echo $SADMIN->reload($amount, $CONF['casper_url']);
 			exit();
 		} else {
 			$error_reload = $SADMIN->getErrorDetail($can);
@@ -23,9 +23,9 @@ if(isset($_GET["paybox"]))
 {
 	if(isset($_GET["trans"])) {
 		if($_GET['paybox'] == 'erreur') {
-			header("Location: ".$CONF['url']."?paybox=".$_GET["paybox"]."&NUMERR=".$_GET['NUMERR']);
+			header("Location: ".$CONF['casper_url']."?paybox=".$_GET["paybox"]."&NUMERR=".$_GET['NUMERR']);
 		} else {
-			header("Location: ".$CONF['url']."?paybox=".$_GET["paybox"]);
+			header("Location: ".$CONF['casper_url']."?paybox=".$_GET["paybox"]);
 		}
 	}
 	
