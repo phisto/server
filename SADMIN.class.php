@@ -34,11 +34,14 @@ require_once 'class/WsdlBase.class.php';
 require_once 'class/Buyer.class.php';
 require_once 'class/User.class.php';
 require_once 'class/ComplexData.class.php';
+require_once 'class/xmlToArrayParser.class.php';
+require_once 'class/Paybox.class.php';
 
 class SADMIN extends WsdlBase {
 
     private  $User;
-
+		protected $MAX_CREDIT = 10000; //100 €
+		
     /**
      * Constructeur qui chope la conexion a la DB
      * @return
@@ -58,6 +61,30 @@ class SADMIN extends WsdlBase {
 	 */
     public function login($data, $meanOfLogin, $pass, $ip) {
         $this->User = new User($data, $meanOfLogin, $pass, $ip);
+        $this->Point = new Point(1);
+        return $this->User->getState();
+    }
+    
+   /**
+	 * Connecter le user avec un ticket CAS.
+	 * 
+	 * @param String $ticket
+	 * @param String $service
+	 * @return int $state
+	 */
+    public function loginCas($ticket, $service) {
+			  $url_validate = "https://cas.utc.fr/cas/serviceValidate?service=".$service."&ticket=".$ticket;
+			  $get_reponse = fopen($url_validate, "r");
+			  $data=''; 
+				while(!feof($get_reponse)) 
+					$data.=fread($get_reponse,100); 
+				fclose($handle);
+				$parsed = new xmlToArrayParser($data);
+				if(isset($parsed->array['cas:serviceResponse']['cas:authenticationSuccess']['cas:user'])) 
+					$login = $parsed->array['cas:serviceResponse']['cas:authenticationSuccess']['cas:user']; 
+				else
+					$login = "-1";
+        $this->User = new User($login, 1, "", 0, 1);
         $this->Point = new Point(1);
         return $this->User->getState();
     }
@@ -116,6 +143,68 @@ class SADMIN extends WsdlBase {
 			return 400;
 		}
     }	
+    
+     /**
+     * Renvoi le crédit du user.
+     * 
+     * @return int $credit
+     */
+    public function getCredit() {
+        return $this->User->getCredit();
+    }	
+
+		/**
+		* Retourne le firstname
+		* 
+		* @return string $firstname
+		*/
+		public function getFirstname() {
+			return $this->User->getFirstname();
+		}
+
+		/**
+		* Retourne le lastname
+		* 
+		* @return string $lastname
+		*/
+		public function getLastname() {
+			return $this->User->getLastname();
+		}
+	
+	  /**
+	   * Fonction pour vérifier qu'un client peut recharger d'un certain montant
+	   * Il n'est pas obligatoire de l'appeler avant reload($amount)
+	   * Mais le retour de reload si on a pas le droit de recharger sera beaucoup moins "joli"
+	   * 
+	   * @param int $amount (en centimes)
+	   * @return int $code
+	   */
+	  public function canReload($amount) {
+			$Buyer_credit = $this->User->getCredit(); //évite de faire 2 fois de suite la même requête
+		  if ($Buyer_credit >= $this->MAX_CREDIT)
+				return 450;
+			if (($Buyer_credit + $amount) > $this->MAX_CREDIT)
+				return 451;
+			return 1;
+		}
+	
+	  /**
+     * Fonction pour recharger un client.
+     * 
+     * @param int $amount (en centimes)
+     * @param String $callbackUrl
+     * @return String $page
+     */
+     
+    public function reload($amount, $callbackUrl) {
+			  // Peut-il se recharger d'un tel montant
+			  $auth = $this->canReload($amount);
+			  if($auth != 1)
+					return "<error>".$this->getErrorDetail($auth)."</error>";
+					
+        $pb = new Paybox($this->User);
+        return $pb->execute($amount, $callbackUrl);
+    }
 
     /**
      * Fonction pour se blocker soi meme (en cas de perte/vol par exemple)
@@ -363,41 +452,6 @@ class SADMIN extends WsdlBase {
         }
     }	
 	
-	
-	
-	
-	
-	
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Retourne un csv qui contient les id_fundation, id_point en fonction de ses droits
